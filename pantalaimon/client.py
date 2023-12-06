@@ -430,6 +430,12 @@ class PanClient(AsyncClient):
 
         self.pan_store.save_token(self.server_name, self.user_id, self.next_batch)
 
+        for room_id in response.rooms.invite.keys():
+            # To ensure that the user being invited can decrypt existing messages,
+            # we share all Megolm sessions for the room with the user.
+            self.populate_group_sessions(room_id)
+            await self._save_group_sessions(room_id)
+
         for room_id, room_info in response.rooms.join.items():
             if room_info.timeline.limited:
                 room = self.rooms[room_id]
@@ -447,6 +453,16 @@ class PanClient(AsyncClient):
                 await self.history_fetch_queue.put(task)
                 self.new_fetch_task.set()
                 self.new_fetch_task.clear()
+
+    async def _save_group_sessions(self, room_id):
+        inbound_group_store = self.olm.inbound_group_store[room_id]
+        if inbound_group_store:
+            for sender_key in inbound_group_store:
+                for session_id in inbound_group_store[sender_key]:
+                    group_session = self.olm.inbound_group_store.get(
+                        room_id, sender_key, session_id
+                    )
+                    self.store.save_inbound_group_session(group_session)
 
     async def keys_query_cb(self, response):
         if response.changed:
