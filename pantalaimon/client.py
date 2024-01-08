@@ -562,7 +562,7 @@ class PanClient(AsyncClient):
         if INDEXING_ENABLED:
             self.history_fetcher_task = loop.create_task(self.fetcher_loop())
 
-        timeout = 5000
+        timeout = 30000
         sync_filter = {"room": {"state": {"lazy_load_members": True}}}
         next_batch = self.pan_store.load_token(self.server_name, self.user_id)
 
@@ -930,6 +930,8 @@ class PanClient(AsyncClient):
         Returns the json response with decrypted events.
         """
         logger.info("Decrypting sync")
+
+        self.handle_to_device_from_sync_body(body)
 
         for room_id, room_dict in body.get("rooms", {}).get("join", {}).items():
             try:
