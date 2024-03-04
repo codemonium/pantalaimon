@@ -548,7 +548,7 @@ class PanClient(AsyncClient):
                 )
                 await self.send_update_device(device)
 
-    def start_loop(self, loop_sleep_time=1000):
+    def start_loop(self, loop_sleep_time=10000):
         """Start a loop that runs forever and keeps on syncing with the server.
 
         The loop can be stopped with the stop_loop() method.
