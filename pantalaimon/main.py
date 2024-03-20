@@ -22,6 +22,7 @@ import janus
 import keyring
 import logbook
 import nio
+import uvloop
 from aiohttp import web
 from appdirs import user_config_dir, user_data_dir
 from logbook import StderrHandler
@@ -32,6 +33,8 @@ from pantalaimon.log import logger
 from pantalaimon.store import KeyDroppingSqliteStore
 from pantalaimon.thread_messages import DaemonResponse
 from pantalaimon.ui import UI_ENABLED
+
+uvloop.install()
 
 
 def create_dirs(data_dir, conf_dir):
