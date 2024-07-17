@@ -79,26 +79,12 @@ async def init(data_dir, server_conf, send_queue, recv_queue):
             ),
             web.get("/_matrix/client/r0/sync", proxy.sync),
             web.get("/_matrix/client/v3/sync", proxy.sync),
-            web.post("/_matrix/client/r0/createRoom", proxy.createRoom),
-            web.post("/_matrix/client/v3/createRoom", proxy.createRoom),
             web.post("/_matrix/client/r0/rooms/{room_id}/invite", proxy.invite),
             web.post("/_matrix/client/v3/rooms/{room_id}/invite", proxy.invite),
             web.post("/_matrix/client/r0/join/{room_id_or_alias}", proxy.join),
             web.post("/_matrix/client/v3/join/{room_id_or_alias}", proxy.join),
             web.get("/_matrix/client/r0/rooms/{room_id}/messages", proxy.messages),
             web.get("/_matrix/client/v3/rooms/{room_id}/messages", proxy.messages),
-            web.put(
-                r"/_matrix/client/r0/rooms/{room_id}/send/{event_type}/{txnid}",
-                proxy.send_message,
-            ),
-            web.put(
-                r"/_matrix/client/v3/rooms/{room_id}/send/{event_type}/{txnid}",
-                proxy.send_message,
-            ),
-            web.post(
-                r"/_matrix/client/r0/rooms/{room_id}/send/{event_type}",
-                proxy.send_message,
-            ),
             web.post("/_matrix/client/r0/user/{user_id}/filter", proxy.filter),
             web.post("/_matrix/client/v3/user/{user_id}/filter", proxy.filter),
             web.post("/.well-known/matrix/client", proxy.well_known),
@@ -127,22 +113,6 @@ async def init(data_dir, server_conf, send_queue, recv_queue):
             web.get(
                 "/_matrix/media/r0/download/{server_name}/{media_id}/{file_name}",
                 proxy.download,
-            ),
-            web.post(
-                r"/_matrix/media/r0/upload",
-                proxy.upload,
-            ),
-            web.post(
-                r"/_matrix/media/v3/upload",
-                proxy.upload,
-            ),
-            web.put(
-                r"/_matrix/client/r0/profile/{userId}/avatar_url",
-                proxy.profile,
-            ),
-            web.put(
-                r"/_matrix/client/v3/profile/{userId}/avatar_url",
-                proxy.profile,
             ),
         ]
     )
