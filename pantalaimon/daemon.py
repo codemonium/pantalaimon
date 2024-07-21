@@ -564,6 +564,18 @@ class ProxyDaemon:
         except ClientConnectionError as e:
             return web.Response(status=500, text=str(e))
 
+    async def forward_to_web_with_overridden_access_token(self, request):
+        access_token = self.get_access_token(request)
+
+        if not access_token:
+            return self._missing_token
+
+        client = await self._find_client(access_token)
+        if not client:
+            return self._unknown_token
+
+        return await self.forward_to_web(request, token=client.access_token)
+
     async def router(self, request):
         """Catchall request router."""
         return await self.forward_to_web(request)
